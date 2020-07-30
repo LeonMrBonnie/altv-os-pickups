@@ -1,4 +1,4 @@
-![](http://puu.sh/GbYak/38031ded98.png)
+![](https://i.imgur.com/JJ0Fv6A.png)
 
 # Open Source - Pickups
 
