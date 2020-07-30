@@ -56,14 +56,16 @@ To create or remove a pickup you have two simple events you can use from the ser
 
 Arguments for `pickups:create`: (Arguments starting with a `?` are optional)
 
-| Argument       | Description                         | Type      | Default value   |
-| -------------- | ----------------------------------- | --------- | --------------- |
-| `name`         | The unique name of the pickup       | `String`  |                 |
-| `model`        | The model for the pickup            | `String`  |                 |
-| `position`     | The position for the pickup         | `Vector3` |                 |
-| `?dimension`   | The dimension for the pickup        | `Number`  | `0`             |
-| `?respawn`     | If the pickup should respawn        | `Boolean` | `false`         |
-| `?respawnTime` | The time in ms for the respawn      | `Number`  | `30000`         |
+| Argument          | Description                         | Type      | Default value                        |
+| ----------------- | ----------------------------------- | --------- | ------------------------------------ |
+| `name`            | The unique name of the pickup       | `String`  |                                      |
+| `model`           | The model for the pickup            | `String`  |                                      |
+| `position`        | The position for the pickup         | `Vector3` |                                      |
+| `?dimension`      | The dimension for the pickup        | `Number`  | `0`                                  |
+| `?respawn`        | If the pickup should respawn        | `Boolean` | `false`                              |
+| `?respawnTime`    | The time in ms for the respawn      | `Number`  | `30000`                              |
+| `?pickupSound`    | The pickup sound name               | `String`  | `Deliver_Pick_Up`                    |
+| `?pickupSoundSet` | The pickup sound set name           | `String`  | `HUD_FRONTEND_MP_COLLECTABLE_SOUNDS` |
 
 ---
 
