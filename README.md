@@ -50,7 +50,6 @@ To create or remove a pickup you have two simple events you can use from the ser
 | ----------------- | ------------------------ |
 | Create            | `pickups:create`         |
 | Remove            | `pickups:remove`         |
-| Set Stream Range  | `pickups:setStreamRange` |
 
 ---
 
@@ -75,14 +74,6 @@ Arguments for `pickups:remove`:
 | -------------- | ----------------------------------- | --------- | --------------- |
 | `name`         | The unique name of the pickup       | `String`  |                 |
 
----
-
-Arguments for `pickups:setStreamRange`: (This event is optional)
-
-| Argument       | Description                         | Type      | Default value   |
-| -------------- | ----------------------------------- | --------- | --------------- |
-| `range`        | The desired streaming range         | `Number`  |                 |
-
 ### !! IMPORTANT !!
 
 The pickup names have to be unique. How you create these unique names is up to you.
@@ -105,6 +96,9 @@ alt.on("pickups:pickedUp", (player, pickupName) => {
     alt.log(`${player.name} picked up: ${pickupName}`);
 });
 ```
+
+# Credits
+- [Splak](https://www.twitch.tv/splaky) - Helping with the object streamer
 
 # Other alt:V Open Source Resources
 

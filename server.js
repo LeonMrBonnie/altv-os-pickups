@@ -1,7 +1,5 @@
 import * as alt from "alt-server";
 
-let STREAM_RANGE = 200;
-
 class Pickups {
     static _pickups = {};
     
@@ -21,13 +19,12 @@ class Pickups {
     static handleEnterColshape(colshape, entity) {
         if(!entity instanceof alt.Player) return;
 
-        if(colshape.isStreamColshape) colshape.ownerPickup.onEnterStreamRange(entity);
-        else if(colshape.isPickupColshape) colshape.ownerPickup.onPickup(entity);
+        if(colshape.isPickupColshape) colshape.ownerPickup.onPickup(entity);
     }
-    static handleLeaveColshape(colshape, entity) {
-        if(!entity instanceof alt.Player) return;
-
-        if(colshape.isStreamColshape) colshape.ownerPickup.onLeaveStreamRange(entity);
+    static handlePlayerConnect(player) {
+        for(const name in Pickups._pickups) {
+            Pickups._pickups[name].createForPlayer(player);
+        }
     }
 
     constructor(name, model, position, dimension, respawn, respawnTime, pickupSound, pickupSoundSet) {
@@ -44,42 +41,34 @@ class Pickups {
         };
 
         this.createColshapes();
+        this.createForPlayer(null);
     }
     createColshapes() {
-        this._streamColshape = new alt.ColshapeCylinder(this.position.x, this.position.y, this.position.z, STREAM_RANGE, STREAM_RANGE / 2);
-        this._streamColshape.isStreamColshape = true;
-        this._streamColshape.ownerPickup = this;
-
-        this._pickupColshape = new alt.ColshapeCylinder(this.position.x, this.position.y, this.position.z, 1.25, 1.25);
+        this._pickupColshape = new alt.ColshapeCylinder(this.position.x, this.position.y, this.position.z, 1.5, 1.5);
         this._pickupColshape.isPickupColshape = true;
         this._pickupColshape.ownerPickup = this;
     }
     removeColshapes() {
-        this._streamColshape.destroy();
         this._pickupColshape.destroy();
-    }
-    onEnterStreamRange(player) {
-        if(this._disabled) return;
-        if(player.dimension !== this.dimension) return;
-        alt.emitClient(player, "pickups:create", this.name, this.model, this.position);
-    }
-    onLeaveStreamRange(player) {
-        alt.emitClient(player, "pickups:remove", this.name);
     }
     onPickup(player) {
         if(player.dimension !== this.dimension) return;
         if(this._disabled) return;
         this._disabled = true;
-        alt.emitClient(null, "pickups:remove", this.name);
+        this.removeForPlayer(null);
         alt.emitClient(player, "pickups:pickup", this.pickupSound.name, this.pickupSound.set);
         alt.emit("pickups:pickedUp", player, this.name);
         if(this.respawn) this._respawnTimeout = alt.setTimeout(() => {
             this._disabled = false;
-            alt.Player.all.forEach((ply) => {
-                if(this._streamColshape.isEntityIn(ply)) alt.emitClient(ply, "pickups:create", this.name, this.model, this.position);
-            });
+            this.createForPlayer(null);
         }, this.respawnTime);
         else Pickups.remove(this.name);
+    }
+    createForPlayer(player) {
+        alt.emitClient(player, "pickups:create", this.name, this.model, this.position);
+    }
+    removeForPlayer(player) {
+        alt.emitClient(player, "pickups:remove", this.name);
     }
 
     get name() {
@@ -106,7 +95,7 @@ class Pickups {
 }
 
 alt.on("entityEnterColshape", Pickups.handleEnterColshape);
-alt.on("entityLeaveColshape", Pickups.handleLeaveColshape);
+alt.on("playerConnect", Pickups.handlePlayerConnect);
 
 alt.on("pickups:create", Pickups.create);
 alt.on("pickups:remove", Pickups.remove);
