@@ -40,6 +40,7 @@ class Pickups {
             set: pickupSoundSet
         };
 
+        Pickups._pickups[name] = this;
         this.createColshapes();
         this.createForPlayer(null);
     }
