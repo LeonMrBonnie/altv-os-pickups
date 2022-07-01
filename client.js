@@ -1,10 +1,9 @@
 import * as alt from "alt-client";
 import * as native from "natives";
-import * as workers from "alt-worker"
 let pickups = {};
-let streamer = new alt.Worker('./worker.js')
-streamer.start()
-streamer.on('load',()=>console.log(`Worker Loaded`))
+let streamer = new alt.Worker('./worker.js');
+streamer.start();
+streamer.on('load', () => console.log(`Worker Loaded`) );
 streamer.on('error', (error) => {
     if (alt.debug) console.log(error);
 });
@@ -16,8 +15,8 @@ streamer.on("createObject", (name, model, pos) => {
 
 alt.on('resourceStop',()=>{
     for (const key in pickups) {
-            const element = pickups[key];
-            if (element && typeof element === "number") native.deleteObject(element)
+        const element = pickups[key];
+        if (element && typeof element === "number") native.deleteObject(element)
     }
 })
 
