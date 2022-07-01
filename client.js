@@ -1,19 +1,25 @@
 import * as alt from "alt-client";
 import * as native from "natives";
-
+import * as workers from "alt-worker"
 let pickups = {};
-let streamer = new alt.WebView("http://resource/streamer.html");
-
-alt.setInterval(() => {
-    let pos = alt.Player.local.pos;
-    streamer.emit("updatePlayerPos", pos.x, pos.y, pos.z);
-}, 2000);
-
+let streamer = new alt.Worker('./worker.js')
+streamer.start()
+streamer.on('load',()=>console.log(`Worker Loaded`))
+streamer.on('error', (error) => {
+    if (alt.debug) console.log(error);
+});
 streamer.on("createObject", (name, model, pos) => {
     pickups[name] = native.createObject(model, pos.x, pos.y, pos.z, false, false, false);
     native.freezeEntityPosition(pickups[name], true);
     native.setEntityCollision(pickups[name], false, false);
 });
+
+alt.on('resourceStop',()=>{
+    for (const key in pickups) {
+            const element = pickups[key];
+            if (element && typeof element === "number") native.deleteObject(element)
+    }
+})
 
 streamer.on("removeObject", (name) => {
     native.deleteObject(pickups[name]);
@@ -48,3 +54,7 @@ alt.everyTick(() => {
         native.drawLightWithRangeAndShadow(pos.x, pos.y, pos.z, 255, 255, 255, 2.5, 3.5, 15.0);
     }
 });
+alt.setInterval(() => {
+    let pos = alt.Player.local.pos;
+    streamer.emit("updatePlayerPos", pos.x, pos.y, pos.z);
+}, 2000);
